@@ -23,18 +23,18 @@ import { useToast } from "@/hooks/use-toast"
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+// import TagSelector from '@/components/custom/TagSelector';
 
 const UsefulLinksField = dynamic(() => import('@/components/custom/UseFullLinksField'), {
     loading: () => <div>Loading Usefull links...</div>,
     ssr: false
   })
   
-  const TagField = dynamic(() => import('@/components/custom/TagField'), {
+  const TagSelector = dynamic(() => import('@/components/custom/TagSelector'), {
     loading: () => <div>Loading Tags...</div>,
     ssr: false
   })
  
-// afsd 
 
 const formSchema = z.object({
     firstName: z.string().min(2, { message: "firstName must be at least 2 characters." }),
@@ -54,56 +54,10 @@ const formSchema = z.object({
     Tag: z.any().optional(),
 })
 
-const frameworks = [
-    {
-        value: "frontend-developer",
-        label: "Frontend Developer",
-    },
-    {
-        value: "backend-developer",
-        label: "Backend Developer",
-    },
-    {
-        value: "fullstack-developer",
-        label: "Full Stack Developer",
-    },
-    {
-        value: "mobile-developer",
-        label: "Mobile Developer",
-    },
-    {
-        value: "ui-designer",
-        label: "UI Designer",
-    },
-    {
-        value: "ux-designer",
-        label: "UX Designer",
-    },
-    {
-        value: "product-designer",
-        label: "Product Designer",
-    },
-    {
-        value: "graphic-designer",
-        label: "Graphic Designer",
-    },
-    {
-        value: "devops-engineer",
-        label: "DevOps Engineer",
-    },
-    {
-        value: "data-scientist",
-        label: "Data Scientist",
-    },
-    {
-        value: "ml-engineer",
-        label: "Machine Learning Engineer",
-    },
-    {
-        value: "cloud-architect",
-        label: "Cloud Architect",
-    }
-]
+interface Tag {
+    value: string;
+    label: string;
+  }
 
 const FormPage = () => {
     const [loading, setLoading] = useState<Boolean>(false);
@@ -111,6 +65,7 @@ const FormPage = () => {
     const bearer = getCookie('Bearer');
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState("")
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([])
 
     const { toast } = useToast()
 
@@ -279,8 +234,11 @@ const FormPage = () => {
                                     )}
                                 />
                             </div>
-                            <TagField form={form} />
-
+                            {/* <TagField form={form} /> */}
+                            <TagSelector 
+                                selectedTags={selectedTags}
+                                setSelectedTags={setSelectedTags}
+                            />
                             <Button type="submit" className="mx-2 sm:mx-0">{loading ? "Loading..." : "Submit"}</Button>
                         </form>
                     </Form>
