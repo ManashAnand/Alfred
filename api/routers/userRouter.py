@@ -27,15 +27,14 @@ async def get_user_data(
     blogs: str = Form(None),
     portfolio: str = Form(None),
     twitter: str = Form(None),
-    Tag: str = Form(None),
     resume: UploadFile = File(None),
-    # tags: str = Form(None),
+    tags: str = Form(None),
     user_info: dict = Depends(verify_bearer_token)
 ):
     try:
         user_id = user_info.get('sub')
         resume_url = None
-        # tags_list = json.loads(tags) if tags else []
+        tags_list = json.loads(tags) if tags else []
         
         userExistingData,check_if_user_exist = await check_user_exist(user_id)
         print(check_if_user_exist)
@@ -74,11 +73,11 @@ async def get_user_data(
                 "portfolio": portfolio or userExistingData['portfolio'],
                 "twitter": twitter or userExistingData['twitter'],
                 "resume": resume_url or userExistingData['resume'],
-                "Tag": Tag or userExistingData['Tag'],
+                # "Tag": Tag or userExistingData['Tag'],
                 "user_id": user_id,
             }
-            # if tags:
-                # tags = await add_tags_for_user(user_id,tags_list)
+            if tags:
+                tags = await add_tags_for_user(user_id,tags_list)
             # cloudflare_data = {
             #     "user_id": user_id,
             #     "CLOUDFLARE_ACCOUNT_ID":CLOUDFLARE_ACCOUNT_ID,
@@ -124,12 +123,12 @@ async def get_user_data(
             "blogs": blogs,
             "portfolio": portfolio,
             "twitter": twitter,
-            "Tag":Tag,
+            # "Tag":Tag,
             "resume": resume_url,
             "user_id": user_id,
         }
         
-        # tags = await add_tags_for_user(user_id,tags_list)
+        tags = await add_tags_for_user(user_id,tags_list)
         res = supabase_client.table("userinfo").insert(user_data).execute()
         
         return {"status": "success", "data": res.data[0]}

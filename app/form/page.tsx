@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
 import axios from "axios";
 import { getCookie } from 'cookies-next';
 import { useToast } from "@/hooks/use-toast"
@@ -51,7 +50,6 @@ const formSchema = z.object({
     portfolio: z.string().optional(),
     twitter: z.string().optional(),
     resume: z.any().optional(),
-    Tag: z.any().optional(),
 })
 
 interface Tag {
@@ -87,7 +85,6 @@ const FormPage = () => {
             portfolio: "",
             twitter: "",
             resume: "",
-            Tag: ""
         },
     })
 
@@ -106,6 +103,9 @@ const FormPage = () => {
                     formData.append(key, values[key as keyof typeof values]?.toString() || '')
                 }
             })
+
+            formData.append('tags', JSON.stringify(selectedTags.map(tag => tag.value)))
+
 
             // Add resume file if it exists
             if (values.resume instanceof FileList && values.resume.length > 0) {

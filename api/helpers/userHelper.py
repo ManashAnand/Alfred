@@ -164,38 +164,47 @@ async def ask_from_cloudflare(user_whole_info: UserInfoModel,input_from_user:str
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
     
     
-async def add_tags_for_user(user_id: str, tags_list: List[dict]):
+async def add_tags_for_user(user_id: str, tags_list: List[str]):
     tag_ids = []
     
-    # First, delete any existing tags for the user
-    delete_response = supabase_client.table('user_tags').delete().eq('user_id', user_id).execute()
-    
-    # Now, add each tag from tags_list
-    for tag in tags_list:
-        tag_value = tag.get('value')
-        tag_label = tag.get('label')
+    try:
+        # Delete existing tags for the user - don't treat empty response as error
+        delete_response = supabase_client.table('user_tags').delete().eq('user_id', user_id).execute()
+        print(f"Deleted existing tags: {delete_response}")
+            
+        print("Adding new tags:", tags_list)
+        for tag_value in tags_list:
+            if tag_value:
+                # Check if the tag already exists
+                existing_tag = supabase_client.table('tags').select('tag_id').eq('tag_name', tag_value).single().execute()
 
-        if tag_value and tag_label:
-            # Check if the tag already exists
-            existing_tag = supabase_client.table('tags').select('tag_id').eq('tag_name', tag_value).single().execute()
-
-            if existing_tag.data:
-                # If the tag exists, get its tag_id
-                tag_id = existing_tag.data['tag_id']
-            else:
-                # If it doesn't exist, insert it into the tags table
-                response = supabase_client.table('tags').insert({'tag_name': tag_value, 'label': tag_label}).execute()
-                if  response.data:
-                    tag_id = response.data[0]['tag_id']
+                if existing_tag.data:
+                    # If the tag exists, get its tag_id
+                    tag_id = existing_tag.data['tag_id']
                 else:
-                    print(f"Error inserting tag {tag_label}: {response} - {response.data}")
-                    continue  # Skip this tag on error
+                    # If it doesn't exist, insert it into the tags table
+                    response = supabase_client.table('tags').insert({
+                        'tag_name': tag_value, 
+                        'label': tag_value
+                    }).execute()
+                    if response.data:
+                        tag_id = response.data[0]['tag_id']
+                    else:
+                        print(f"Error inserting tag {tag_value}: {response}")
+                        continue
 
-            # Insert the user-tag relationship into the user_tags table
-            user_tag_response = supabase_client.table('user_tags').insert({'user_id': user_id, 'tag_id': tag_id}).execute()
-            if user_tag_response.data:
-                print(f"Error adding tag for user: {user_tag_response} - {user_tag_response.data}")
+                # Insert the user-tag relationship
+                user_tag_response = supabase_client.table('user_tags').insert({
+                    'user_id': user_id, 
+                    'tag_id': tag_id
+                }).execute()
+                if not user_tag_response.data:
+                    print(f"Error adding tag for user: {user_tag_response}")
+                else:
+                    tag_ids.append(tag_id)
 
-            tag_ids.append(tag_id)
-
-    return tag_ids  # Optionally return the IDs of the tags added or associated
+        return tag_ids
+        
+    except Exception as e:
+        print(f"Error in add_tags_for_user: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
