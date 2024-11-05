@@ -5,8 +5,6 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import { useState, useEffect, useRef } from 'react'
 import { Send, GripVertical } from "lucide-react"
-// import Chatbot from '@/components/custom/Chatbot';
-// import DocViewer from '@/components/custom/DocViewer';
 const Chatbot = dynamic(() => import('@/components/custom/Chatbot'), {
     loading: () => <div>Loading chat...</div>
   })
@@ -18,7 +16,7 @@ const Chatbot = dynamic(() => import('@/components/custom/Chatbot'), {
 const ChatSection = () => {
     const { user_id } = useParams()
     const userId = Array.isArray(user_id) ? user_id[0] : user_id
-    
+    console.log(userId)
 
     const [sliderPosition, setSliderPosition] = useState(50)
     const [isDragging, setIsDragging] = useState(false)
@@ -74,7 +72,7 @@ const ChatSection = () => {
                 </div>
 
                 {/* Chatbot */}
-                <Chatbot sliderPosition={sliderPosition} />
+                <Chatbot sliderPosition={sliderPosition} userId={userId}/>
             </div>
         </div>
     )

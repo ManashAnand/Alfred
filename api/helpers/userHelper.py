@@ -66,7 +66,7 @@ async def get_user_data(user_id: str):
     
     
 
-async def ask_from_cloudflare(user_whole_info: UserInfoModel,input_from_user:str):
+async def ask_from_cloudflare(user_id_of_asker:str,user_whole_info: UserInfoModel,input_from_user:str):
     try:
         print("User Info Received:", user_whole_info)
         # res =  supabase_client.table("cloudflare") .select("*").eq("user_id", user_whole_info["user_id"]).single().execute()

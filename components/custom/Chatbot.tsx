@@ -16,7 +16,7 @@ const Avatar = dynamic(() => import("@/components/ui/avatar").then(mod => mod.Av
 const AvatarFallback = dynamic(() => import("@/components/ui/avatar").then(mod => mod.AvatarFallback), { ssr: false });
 const AvatarImage = dynamic(() => import("@/components/ui/avatar").then(mod => mod.AvatarImage), { ssr: false });
 
-const Chatbot = ({ sliderPosition }: { sliderPosition: number }) => {
+const Chatbot = ({ sliderPosition,userId }: { sliderPosition: number,userId:string }) => {
   const bearer = getCookie('Bearer');
   const [messages, setMessages] = useState([
     { text: "Hello! I'm your AI assistant. How can I help you with your resume?", sender: 'bot' },
@@ -72,7 +72,7 @@ const Chatbot = ({ sliderPosition }: { sliderPosition: number }) => {
     setInputMessage('');
 
     try {
-      const { data } = await axios.post('/api/ask', { message: inputMessage }, {
+      const { data } = await axios.post(`/api/ask?user_id_of_dev=${userId}`, { message: inputMessage }, {
         headers: {
           Authorization: `Bearer ${bearer}`,
           'Content-Type': 'application/json',

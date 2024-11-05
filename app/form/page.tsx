@@ -134,7 +134,7 @@ const FormPage = () => {
                         hour12: true
                     }),
                 })
-                // router.push(`/Chatbot`)
+                router.push(`/Chatbot/${data.data.user_id}`)
             }
             setLoading(false)
             // console.log(data)
