@@ -28,7 +28,7 @@ const Chatbot = ({ sliderPosition }: { sliderPosition: number }) => {
     messages.map((message, index) => (
       <div
         key={index}
-        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
+        className={`flex group/message ${message.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
       >
         <div className={`flex items-start ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
           <Avatar className="w-8 h-8">
@@ -37,7 +37,29 @@ const Chatbot = ({ sliderPosition }: { sliderPosition: number }) => {
           </Avatar>
           <div className={`mx-2 p-3 rounded-lg ${message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
             {message.text}
+            <button
+              onClick={() => navigator.clipboard.writeText(message.text)}
+              className="  p-1 rounded hover:border-2 mx-4 dark:hover:bg-gray-700 opacity-0 group-hover/message:opacity-100 transition-opacity duration-200"
+              title="Copy to clipboard"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              {/* copy */}
+            </button>
           </div>
+         
         </div>
       </div>
     ))
