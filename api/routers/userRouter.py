@@ -41,7 +41,7 @@ async def get_user_data(
         # return
         if check_if_user_exist:
             resume_url = ""
-            if resume:
+            if resume is not None:
                 print(resume.filename)
                 file_extension = resume.filename.split('.')[-1].lower()  
                 file_name = f"{uuid.uuid4()}.{file_extension}"

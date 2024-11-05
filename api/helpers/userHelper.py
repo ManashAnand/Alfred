@@ -69,21 +69,26 @@ async def get_user_data(user_id: str):
 async def ask_from_cloudflare(user_whole_info: UserInfoModel,input_from_user:str):
     try:
         print("User Info Received:", user_whole_info)
-        res =  supabase_client.table("cloudflare") .select("*").eq("user_id", user_whole_info["user_id"]).single().execute()
-        print(res)
-        print(res.data[0]["CLOUDFLARE_ACCOUNT_ID"])
+        # res =  supabase_client.table("cloudflare") .select("*").eq("user_id", user_whole_info["user_id"]).single().execute()
+        # print(res)
+        # print(res.data[0]["CLOUDFLARE_ACCOUNT_ID"])
         
         
-        CLOUDFLARE_ACCOUNT_ID = res.data[0]["CLOUDFLARE_ACCOUNT_ID"]
-        CLOUDFLARE_AUTH_TOKEN = res.data[0]["CLOUDFLARE_AUTH_TOKEN"]
+        # db_account_id = res.data[0]["CLOUDFLARE_ACCOUNT_ID"]
+        # db_auth_token = res.data[0]["CLOUDFLARE_AUTH_TOKEN"]
         
-        if (
-            not CLOUDFLARE_ACCOUNT_ID
-            or not CLOUDFLARE_AUTH_TOKEN
-        ):
-            CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
-            CLOUDFLARE_AUTH_TOKEN = os.getenv("CLOUDFLARE_AUTH_TOKEN")
-            
+        # CLOUDFLARE_ACCOUNT_ID = (
+        #     db_account_id if db_account_id and db_account_id.strip() 
+        #     else os.getenv("CLOUDFLARE_ACCOUNT_ID")
+        # )
+        
+        # CLOUDFLARE_AUTH_TOKEN = (
+        #     db_auth_token if db_auth_token and db_auth_token.strip() 
+        #     else os.getenv("CLOUDFLARE_AUTH_TOKEN")
+        # )
+        
+        CLOUDFLARE_AUTH_TOKEN = os.getenv("CLOUDFLARE_AUTH_TOKEN")
+        CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
         CLOUDFLARE_MODEL_FOR_CHAT = os.getenv("CLOUDFLARE_MODEL_FOR_CHAT")
 
         if (
@@ -145,20 +150,30 @@ async def ask_from_cloudflare(user_whole_info: UserInfoModel,input_from_user:str
         
         
         response = requests.post(url, headers=headers, json=payload, stream=False)
-        if response.data:
-            print(f"Failed request: - {response.reason}")
+        print(response)
+        if not response.ok:
+            print(f"Failed request: - {response.status_code} - {response.reason}")
             print(f"Response content: {response.text}")
-            raise HTTPException(status_code=200, detail=response.text)
+            raise HTTPException(
+                status_code=response.status_code, 
+                detail=f"Cloudflare API error: {response.text}"
+            )
         
-        
-        if not response.data:
-            print("Invalid api key")
-            print(f"Failed request: - {response.reason}")
-            print(f"Response content: {response.text}")
-            raise HTTPException(status_code=401, detail=response.text)
-
-        print(response.json()['result']['response']  )
-        return response.json()['result']['response']  
+        try:
+            response_data = response.json()
+            if 'result' in response_data and 'response' in response_data['result']:
+                return response_data['result']['response']
+            else:
+                raise HTTPException(
+                    status_code=500, 
+                    detail="Unexpected response format from Cloudflare"
+                )
+        except ValueError as e:
+            print(f"Failed to parse JSON response: {str(e)}")
+            raise HTTPException(
+                status_code=500, 
+                detail="Failed to parse Cloudflare response"
+            )
     except Exception as e:
         print(f"General exception: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
