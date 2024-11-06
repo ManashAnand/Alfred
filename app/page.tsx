@@ -1,4 +1,3 @@
-"use client";
 
 import Homepage from "@/components/custom/Homepage";
 import * as React from "react"
@@ -12,25 +11,9 @@ import {
 } from "@/components/ui/card"
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
 
 export default function Home() {
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/helloFastApi');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        console.log(data);
-      } catch (error) {
-        console.error('Fetch error:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
+ 
   return (
 
     <div className="  max-w-screen  flex flex-col justify-center items-center mt-4 ">

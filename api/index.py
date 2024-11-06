@@ -41,7 +41,7 @@ def unprotected_route():
     return {"message": "Welcome, un-authenticated user!"}
 
 
-@app.get("/api/helloFastApi")
-def hello_fast_api():
-    print("Working from heres")
-    return {"message": "Hello from FastAPI"}
+@app.get("/api/get_user_id")
+def hello_fast_api(user_info: dict = Depends(verify_bearer_token)):
+    print(user_info["sub"])
+    return {"user_id": user_info["sub"]}

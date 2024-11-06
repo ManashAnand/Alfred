@@ -1,14 +1,48 @@
 "use client";
 
-import React from 'react'
+import React, { useState } from 'react'
 import Lottie from "lottie-react";
 import aibot from '@/public/aibot.json'
 // import aibot from '@/assets/aibot.json';
 import { User2Icon, MessageCircle, ComputerIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
+import { getCookie } from 'cookies-next';
 
 const Homepage = () => {
     const router = useRouter()
+    const bearer = getCookie('Bearer');
+    const [userId, setUserId] = useState<string | null>(null);
+
+
+    const fetchUserData = async (bearer: string) => {
+        try {
+            const response = await fetch('/api/get_user_id', {
+                headers: {
+                    'Authorization': `Bearer ${bearer}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Failed to fetch user data:', error);
+            throw error;
+        }
+    };
+
+    useEffect(() => {
+        if (bearer) {
+            fetchUserData(bearer)
+                .then(data => setUserId(data.user_id))
+                .catch(error => console.error('Error:', error));
+        }
+    }, [bearer]);
+
 
     return (
         <>
@@ -40,7 +74,7 @@ const Homepage = () => {
                                 Create you own AI <ComputerIcon className='ml-2' />
                             </button>
                             <button className="ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg"
-                            onClick={() => router.push('/Chatbot')}
+                                onClick={() => router.push(`/Chatbot/${userId}`)}
                             >
                                 Go to your Chat <MessageCircle className='ml-2' />
                             </button>
