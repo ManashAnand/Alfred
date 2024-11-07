@@ -11,11 +11,14 @@ import Link from 'next/link';
 export default  function Navbar() {
     const router = useRouter()
     const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [userId,setUserId] = useState<String | undefined>("")
     const supabase = createClient()
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setIsAuthenticated(!!session)
+            // console.log(session)
+            setUserId(session?.user?.id)
         })
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -41,7 +44,7 @@ export default  function Navbar() {
         <div className="  max-w-screen   flex justify-center items-center mt-4 p-2 sm:p-0">
             <div className="container  flex justify-between items-center">
 
-                <span className="text-3xl underline decoration-wavy decoration-orange-600 cursor-pointer" onClick={() => router.push('/')}>Alfred</span>
+                <span className="text-3xl underline decoration-wavy decoration-orange-600 cursor-pointer" onClick={() => router.push('/')}>Alfred.ai</span>
 
                 <div className='flex gap-2 justify-center items-center'>
 
@@ -51,7 +54,8 @@ export default  function Navbar() {
                         <Button onClick={() => router.push('/login')}>Login <LogInIcon /></Button>
                     )}
 
-                    <Link href="https://dash.cloudflare.com/profile/api-tokens" className="bg-yellow-600 text-white flex gap-2 p-2 rounded-md">
+                    {/* <Link href="https://dash.cloudflare.com/profile/api-tokens" className="bg-yellow-600 text-white flex gap-2 p-2 rounded-md"> */}
+                    <Link href={`/Cloudflare/${userId}`} className="bg-yellow-600 text-white flex gap-2 p-2 rounded-md">
                         Cloudflare 
                         <span>
                             <ArrowRightCircle />
