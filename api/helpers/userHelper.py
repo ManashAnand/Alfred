@@ -8,12 +8,12 @@ import requests
 from fastapi.responses import StreamingResponse
 
 async def check_user_exist(user_id):
-    response = supabase_client.table("userinfo").select("*").eq("user_id", user_id).single().execute()
+    response = supabase_client.table("userinfo").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
     
     print(response)
-    if response.data:
-        return response.data, True
-    return False
+    if response.data and len(response.data) > 0:
+        return response.data[0], True
+    return None,False
 
 
 

@@ -35,8 +35,9 @@ async def get_user_data(
         user_id = user_info.get('sub')
         resume_url = None
         tags_list = json.loads(tags) if tags else []
-        
+        print("Working here 1")
         userExistingData,check_if_user_exist = await check_user_exist(user_id)
+        print("Working here 2")
         print(check_if_user_exist)
         # return
         if check_if_user_exist:
@@ -127,8 +128,9 @@ async def get_user_data(
             "user_id": user_id,
         }
         
-        tags = await add_tags_for_user(user_id,tags_list)
         res = supabase_client.table("userinfo").insert(user_data).execute()
+        if res.data:
+            tags = await add_tags_for_user(user_id,tags_list)
         
         return {"status": "success", "data": res.data[0]}
     except ValidationError as e:
