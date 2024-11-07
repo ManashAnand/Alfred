@@ -7,7 +7,7 @@ import uuid
 from ..helpers.userHelper import upload_resume,check_user_exist,add_tags_for_user
 import json
 import uuid
-
+from fastapi import Query
 
 router = APIRouter(prefix='/api')
 
@@ -76,7 +76,7 @@ async def get_user_data(
                 # "Tag": Tag or userExistingData['Tag'],
                 "user_id": user_id,
             }
-            if tags:
+            if tags is not None:
                 tags = await add_tags_for_user(user_id,tags_list)
             # cloudflare_data = {
             #     "user_id": user_id,
@@ -123,7 +123,6 @@ async def get_user_data(
             "blogs": blogs,
             "portfolio": portfolio,
             "twitter": twitter,
-            # "Tag":Tag,
             "resume": resume_url,
             "user_id": user_id,
         }
@@ -154,5 +153,21 @@ async def getResume(user_info: dict = Depends(verify_bearer_token)):
         return {"resume_url": None}
     
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    
+
+@router.get('/lastestUser')
+def getLatestUser(user_info: dict = Depends(verify_bearer_token),totalUser: str = Query()):
+    try:
+        response = supabase_client.table("userinfo") \
+            .select("*") \
+            .order('created_at', desc=True) \
+            .limit(totalUser) \
+            .execute()
+            
+        return {"success": True, "data": response.data}
+    except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
     
