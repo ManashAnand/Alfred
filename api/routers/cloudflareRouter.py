@@ -19,7 +19,7 @@ async def add_cloudflare_data(cloudflare_input:CloudflareModel,user_id: str = Qu
             "CLOUDFLARE_AUTH_TOKEN": cloudflare_input.CLOUDFLARE_AUTH_TOKEN
         }
         
-        res = await supabase_client.table('cloudflare').upsert(
+        res =  supabase_client.table('cloudflare').upsert(
             cloudflare_data,
             on_conflict='user_id'  # specify the unique column for conflict resolution
         ).execute()
