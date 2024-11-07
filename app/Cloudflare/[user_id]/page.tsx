@@ -155,7 +155,7 @@ const PersonalFlare = () => {
                             />
                             <AlertDialog open={open} onOpenChange={setOpen}>
                                 <AlertDialogTrigger asChild>
-                                    <Button type="button" disabled={loading}>Submit</Button>
+                                    <Button type="button" disabled={loading}>{loading? "Loading...":"Submit"}</Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
@@ -176,7 +176,7 @@ const PersonalFlare = () => {
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                                         <AlertDialogAction onClick={form.handleSubmit(onSubmit)} disabled={loading}>
-                                            Confirm
+                                            {loading ? "Loading ...":"Confirm"}
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>

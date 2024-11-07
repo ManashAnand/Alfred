@@ -15,8 +15,8 @@ async def add_cloudflare_data(cloudflare_input:CloudflareModel,user_id: str = Qu
         # Create the data dictionary correctly
         cloudflare_data = {
             "user_id": user_id,
-            "cloudflare_account_id": cloudflare_input.CLOUDFLARE_ACCOUNT_ID,
-            "cloudflare_auth_token": cloudflare_input.CLOUDFLARE_AUTH_TOKEN
+            "CLOUDFLARE_ACCOUNT_ID": cloudflare_input.CLOUDFLARE_ACCOUNT_ID,
+            "CLOUDFLARE_AUTH_TOKEN": cloudflare_input.CLOUDFLARE_AUTH_TOKEN
         }
         
         res = await supabase_client.table('cloudflare').upsert(
