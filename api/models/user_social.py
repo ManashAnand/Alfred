@@ -21,7 +21,10 @@ class UserSocialData(BaseModel):
 class UserSocialDataForm(BaseModel):
     data: UserSocialData
     resume: UploadFile | None
-    
+
+class CloudflareModel(BaseModel):
+    CLOUDFLARE_ACCOUNT_ID: str
+    CLOUDFLARE_AUTH_TOKEN: str
 
 class MessageModel(BaseModel):
     message: str

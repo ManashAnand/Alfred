@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -27,16 +27,23 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import Link from 'next/link';
+import axios from 'axios';
+
+import { getCookie } from 'cookies-next';
+import { useToast } from '@/hooks/use-toast';
 
 
 
 
 
 const PersonalFlare = () => {
+    const bearer = getCookie('Bearer');
 
+    const { toast } = useToast()
     const { user_id } = useParams()
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
 
 
     const formSchema = z.object({
@@ -56,10 +63,45 @@ const PersonalFlare = () => {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         console.log(values)
+        setLoading(true)
+        try {
+            const { data } = await axios.post(`/api/cloudflare?user_id=${user_id}`, {
+                CLOUDFLARE_ACCOUNT_ID: values.CLOUDFLARE_ACCOUNT_ID,
+                CLOUDFLARE_AUTH_TOKEN: values.CLOUDFLARE_AUTH_TOKEN,
+
+            }, {
+                headers: {
+                    Authorization: `Bearer ${bearer}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            console.log(data)
+            if(data.success){
+                toast({
+                    title: "Alfred at your service sir",
+                    description: new Date().toLocaleString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                    }),
+                })
+                router.push('/')
+            }
+            setLoading(false)
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setLoading(false)
+        } finally {
+            setLoading(false)
+        }
         setOpen(false)
     }
 
@@ -113,7 +155,7 @@ const PersonalFlare = () => {
                             />
                             <AlertDialog open={open} onOpenChange={setOpen}>
                                 <AlertDialogTrigger asChild>
-                                    <Button type="button">Submit</Button>
+                                    <Button type="button" disabled={loading}>Submit</Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
@@ -133,7 +175,7 @@ const PersonalFlare = () => {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={form.handleSubmit(onSubmit)}>
+                                        <AlertDialogAction onClick={form.handleSubmit(onSubmit)} disabled={loading}>
                                             Confirm
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
