@@ -81,6 +81,7 @@ const Chatbot = ({ sliderPosition,userId }: { sliderPosition: number,userId:stri
       setMessages(prev => [...prev, { text: data.message, sender: 'bot' }]);
     } catch (error) {
       console.error('Error sending message:', error);
+      setMessages(prev => [...prev, { text: "Maybe your cloudflare credentials are not correct or our server is busy or might be you ask too much question too soon, Would you like to buy a Premium model ?", sender: 'bot' }]);
     }
   };
 

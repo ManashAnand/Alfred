@@ -69,26 +69,26 @@ async def get_user_data(user_id: str):
 async def ask_from_cloudflare(user_id_of_asker:str,user_whole_info: UserInfoModel,input_from_user:str):
     try:
         print("User Info Received:", user_whole_info)
-        # res =  supabase_client.table("cloudflare") .select("*").eq("user_id", user_whole_info["user_id"]).single().execute()
-        # print(res)
+        print("User id of asker",user_id_of_asker)
+        res =  supabase_client.table("cloudflare").select("*").eq("user_id", user_id_of_asker).single().execute()
+        print(f"Supabase response of asker ")
+        print(res)
         # print(res.data[0]["CLOUDFLARE_ACCOUNT_ID"])
         
         
-        # db_account_id = res.data[0]["CLOUDFLARE_ACCOUNT_ID"]
-        # db_auth_token = res.data[0]["CLOUDFLARE_AUTH_TOKEN"]
+        db_account_id = res.data.get("CLOUDFLARE_ACCOUNT_ID","")
+        db_auth_token = res.data.get("CLOUDFLARE_AUTH_TOKEN","")
         
-        # CLOUDFLARE_ACCOUNT_ID = (
-        #     db_account_id if db_account_id and db_account_id.strip() 
-        #     else os.getenv("CLOUDFLARE_ACCOUNT_ID")
-        # )
+        CLOUDFLARE_ACCOUNT_ID = (
+            db_account_id if db_account_id and db_account_id.strip() 
+            else os.getenv("CLOUDFLARE_ACCOUNT_ID")
+        )
         
-        # CLOUDFLARE_AUTH_TOKEN = (
-        #     db_auth_token if db_auth_token and db_auth_token.strip() 
-        #     else os.getenv("CLOUDFLARE_AUTH_TOKEN")
-        # )
+        CLOUDFLARE_AUTH_TOKEN = (
+            db_auth_token if db_auth_token and db_auth_token.strip() 
+            else os.getenv("CLOUDFLARE_AUTH_TOKEN")
+        )
         
-        CLOUDFLARE_AUTH_TOKEN = os.getenv("CLOUDFLARE_AUTH_TOKEN")
-        CLOUDFLARE_ACCOUNT_ID = os.getenv("CLOUDFLARE_ACCOUNT_ID")
         CLOUDFLARE_MODEL_FOR_CHAT = os.getenv("CLOUDFLARE_MODEL_FOR_CHAT")
 
         if (
@@ -100,6 +100,11 @@ async def ask_from_cloudflare(user_id_of_asker:str,user_whole_info: UserInfoMode
                 status_code=500, detail="Missing Cloudflare configuration"
             )
 
+        print(user_id_of_asker)
+        # print(user_whole_info["user_id"])
+        print("Here the data comes from asker")
+        print(CLOUDFLARE_ACCOUNT_ID)
+        print(CLOUDFLARE_AUTH_TOKEN)
         url = f"https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/{CLOUDFLARE_MODEL_FOR_CHAT}"
         headers = {
             "Authorization": f"Bearer {CLOUDFLARE_AUTH_TOKEN}",
