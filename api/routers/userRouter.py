@@ -160,13 +160,21 @@ async def getResume(user_info: dict = Depends(verify_bearer_token)):
 @router.get('/lastestUser')
 def getLatestUser(user_info: dict = Depends(verify_bearer_token),totalUser: str = Query()):
     try:
-        response = supabase_client.table("userinfo") \
+        users_response = supabase_client.table("userinfo") \
             .select("*") \
             .order('created_at', desc=True) \
             .limit(totalUser) \
             .execute()
+        
+        for user in users_response.data:
+            tags_response = supabase_client.table("user_tags") \
+                .select("tags(*)") \
+                .eq("user_id", user["user_id"]) \
+                .execute()
             
-        return {"success": True, "data": response.data}
+            user["tags"] = [tag["tags"] for tag in tags_response.data]
+            
+        return {"success": True, "data": users_response.data}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
