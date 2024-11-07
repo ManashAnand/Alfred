@@ -70,14 +70,17 @@ async def ask_from_cloudflare(user_id_of_asker:str,user_whole_info: UserInfoMode
     try:
         print("User Info Received:", user_whole_info)
         print("User id of asker",user_id_of_asker)
-        res =  supabase_client.table("cloudflare").select("*").eq("user_id", user_id_of_asker).single().execute()
+        res =  supabase_client.table("cloudflare").select("*").eq("user_id", user_id_of_asker).order("created_at", desc=True).execute()
         print(f"Supabase response of asker ")
         print(res)
         # print(res.data[0]["CLOUDFLARE_ACCOUNT_ID"])
-        
-        
-        db_account_id = res.data.get("CLOUDFLARE_ACCOUNT_ID","")
-        db_auth_token = res.data.get("CLOUDFLARE_AUTH_TOKEN","")
+        db_account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID")
+        db_auth_token = os.getenv("CLOUDFLARE_AUTH_TOKEN")
+        if res.data:
+            res = res.data[0]
+            
+            db_account_id = res.get("CLOUDFLARE_ACCOUNT_ID","")
+            db_auth_token = res.get("CLOUDFLARE_AUTH_TOKEN","")
         
         CLOUDFLARE_ACCOUNT_ID = (
             db_account_id if db_account_id and db_account_id.strip() 
