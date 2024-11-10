@@ -26,6 +26,9 @@ class CloudflareModel(BaseModel):
     CLOUDFLARE_ACCOUNT_ID: str
     CLOUDFLARE_AUTH_TOKEN: str
 
+class FeedInput(BaseModel):
+    currentFeed: str
+    
 class MessageModel(BaseModel):
     message: str
 

@@ -5,23 +5,26 @@ import dynamic from 'next/dynamic';
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
+import { Send, Share2, BrainCircuit } from "lucide-react";
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 
-// Dynamic imports for larger components
-// Update the dynamic import to include the ScrollArea type
+import { useToast } from "@/hooks/use-toast"
+
+
 const ScrollArea = dynamic(() => import("@/components/ui/scroll-area").then(mod => mod.ScrollArea), { ssr: false });
 const Avatar = dynamic(() => import("@/components/ui/avatar").then(mod => mod.Avatar), { ssr: false });
 const AvatarFallback = dynamic(() => import("@/components/ui/avatar").then(mod => mod.AvatarFallback), { ssr: false });
 const AvatarImage = dynamic(() => import("@/components/ui/avatar").then(mod => mod.AvatarImage), { ssr: false });
 
-const Chatbot = ({ sliderPosition,userId }: { sliderPosition: number,userId:string }) => {
+const Chatbot = ({ sliderPosition, userId }: { sliderPosition: number, userId: string }) => {
   const bearer = getCookie('Bearer');
   const [messages, setMessages] = useState([
     { text: "Hello! I'm your AI assistant. How can I help you with your resume?", sender: 'bot' },
   ]);
   const [inputMessage, setInputMessage] = useState('');
+  const [feedLoading,setFeedLoading] = useState(false)
+  const { toast } = useToast()
 
   // Memoize messages to prevent re-renders
   const messageComponents = useMemo(() => (
@@ -59,7 +62,7 @@ const Chatbot = ({ sliderPosition,userId }: { sliderPosition: number,userId:stri
               {/* copy */}
             </button>
           </div>
-         
+
         </div>
       </div>
     ))
@@ -85,8 +88,80 @@ const Chatbot = ({ sliderPosition,userId }: { sliderPosition: number,userId:stri
     }
   };
 
+  const handleShare = () => {
+
+  }
+
+  const handleFeedData = async () => {
+    const currentFeed = messages
+      .map((message) => `${message.sender}: ${message.text}`)
+      .join('\n');
+
+    console.log(currentFeed)
+    setFeedLoading(true)
+    try {
+      const { data } = await axios.post(`/api/add_user_feed?user_id_of_dev=${userId}`, { currentFeed: currentFeed }, {
+        headers: {
+          Authorization: `Bearer ${bearer}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(data)
+      if(!data.owner){
+        toast({
+          title: "Sir, Respectfully you are not the owner",
+          description: new Date().toLocaleString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true
+          }),
+      })
+      }
+      if(data.status == "success"){
+        if(data.owner){
+          toast({
+            title: "Data sent to your personal Alfred",
+            description: new Date().toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+            }),
+         })
+        }
+      }
+      
+    setFeedLoading(false)
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error sending current feed to your Alfred",
+        description: new Date().toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        }),
+    })
+    
+    setFeedLoading(false)
+    }
+    finally{
+      setFeedLoading(false)
+    }
+  }
   return (
-    <div className="w-full lg:w-[50%] p-4 flex flex-col h-screen" style={{ width: `${100 - sliderPosition}%` }}>
+    <div className="w-full lg:w-[50%] p-4 flex flex-col h-[92vh] " style={{ width: `${100 - sliderPosition}%` }}>
       <Card className="flex-grow flex flex-col">
         <CardHeader>
           <CardTitle>Resume Assistant</CardTitle>
@@ -103,10 +178,21 @@ const Chatbot = ({ sliderPosition,userId }: { sliderPosition: number,userId:stri
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
               className="flex-grow mr-2"
             />
-            <Button onClick={handleSendMessage} size="icon">
-              <Send className="h-4 w-4" />
-              <span className="sr-only">Send message</span>
-            </Button>
+            <div className="flex gap-2">
+
+              <Button onClick={handleSendMessage} size="icon">
+                <Send className="h-4 w-4" />
+                <span className="sr-only">Send message</span>
+              </Button>
+              <Button onClick={handleFeedData} size="icon" disabled={feedLoading}>
+                <BrainCircuit className="h-4 w-4" />
+                <span className="sr-only">Feed Data</span>
+              </Button>
+              <Button onClick={handleShare} size="icon">
+                <Share2 className="h-4 w-4" />
+                <span className="sr-only">Share your chatbot</span>
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

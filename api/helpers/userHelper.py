@@ -150,6 +150,8 @@ async def ask_from_cloudflare(user_id_of_asker:str,user_whole_info: UserInfoMode
                     He is eager to explore opportunities in exciting projects, whether as a full-time employee, an intern, or a freelancer. You can discover more about his work and connect with him through his online profiles:
                     {social_links_text}
                     Also this profile is created at {user_whole_info['created_at']} and change this to normal timezone
+                    
+                    These are the previous chat with alfred {user_whole_info['currentfeed']} 
                     """
                 },
                 {"role": "user", "content": input_from_user},
