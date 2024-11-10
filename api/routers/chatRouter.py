@@ -1,5 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Form, File, UploadFile,Request
-from ..client.supabase import supabase_client
+from fastapi import APIRouter, HTTPException, Depends,Request
 from ..core.security import verify_bearer_token
 from ..models.user_social import MessageModel
 from ..helpers.userHelper import get_user_data,ask_from_cloudflare

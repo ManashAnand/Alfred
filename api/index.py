@@ -5,8 +5,6 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt  # PyJWT
 from .core.security import verify_bearer_token
 from dotenv import load_dotenv
-# from .routers.userRouter import router as UserRouter
-# from .routers.chatRouter import router as ChatRouter
 from .routers import router
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -15,8 +13,6 @@ from slowapi.errors import RateLimitExceeded
 load_dotenv()
 
 app = FastAPI()
-# app.include_router(UserRouter)
-# app.include_router(ChatRouter)
 app.include_router(router)
 
 limiter = Limiter(key_func=get_remote_address)
