@@ -5,11 +5,13 @@ import dynamic from 'next/dynamic';
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Send, Share2, BrainCircuit } from "lucide-react";
+import { Send, BrainCircuit } from "lucide-react";
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 
 import { useToast } from "@/hooks/use-toast"
+import ShareAlfred from './ShareAlfred';
+
 
 
 const ScrollArea = dynamic(() => import("@/components/ui/scroll-area").then(mod => mod.ScrollArea), { ssr: false });
@@ -23,8 +25,9 @@ const Chatbot = ({ sliderPosition, userId }: { sliderPosition: number, userId: s
     { text: "Hello! I'm your AI assistant. How can I help you with your resume?", sender: 'bot' },
   ]);
   const [inputMessage, setInputMessage] = useState('');
-  const [feedLoading,setFeedLoading] = useState(false)
+  const [feedLoading, setFeedLoading] = useState(false)
   const { toast } = useToast()
+
 
   // Memoize messages to prevent re-renders
   const messageComponents = useMemo(() => (
@@ -107,43 +110,10 @@ const Chatbot = ({ sliderPosition, userId }: { sliderPosition: number, userId: s
         },
       });
       console.log(data)
-      if(!data.owner){
+      if (!data.owner) {
         toast({
           title: "Sir, Respectfully you are not the owner",
           description: new Date().toLocaleString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: 'numeric',
-              hour12: true
-          }),
-      })
-      }
-      if(data.status == "success"){
-        if(data.owner){
-          toast({
-            title: "Data sent to your personal Alfred",
-            description: new Date().toLocaleString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true
-            }),
-         })
-        }
-      }
-      
-    setFeedLoading(false)
-    } catch (error) {
-      console.error('Error sending message:', error);
-      toast({
-        title: "Error sending current feed to your Alfred",
-        description: new Date().toLocaleString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
@@ -151,17 +121,50 @@ const Chatbot = ({ sliderPosition, userId }: { sliderPosition: number, userId: s
             hour: 'numeric',
             minute: 'numeric',
             hour12: true
+          }),
+        })
+      }
+      if (data.status == "success") {
+        if (data.owner) {
+          toast({
+            title: "Data sent to your personal Alfred",
+            description: new Date().toLocaleString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true
+            }),
+          })
+        }
+      }
+
+      setFeedLoading(false)
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error sending current feed to your Alfred",
+        description: new Date().toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: true
         }),
-    })
-    
-    setFeedLoading(false)
+      })
+
+      setFeedLoading(false)
     }
-    finally{
+    finally {
       setFeedLoading(false)
     }
   }
   return (
-    <div className="w-full lg:w-[50%] p-4 flex flex-col h-[92vh] " style={{ width: `${100 - sliderPosition}%` }}>
+    <div className="w-full lg:w-[50%] p-4 flex flex-col h-[98vh] " style={{ width: `${100 - sliderPosition}%` }}>
       <Card className="flex-grow flex flex-col">
         <CardHeader>
           <CardTitle>Resume Assistant</CardTitle>
@@ -188,12 +191,10 @@ const Chatbot = ({ sliderPosition, userId }: { sliderPosition: number, userId: s
                 <BrainCircuit className="h-4 w-4" />
                 <span className="sr-only">Feed Data</span>
               </Button>
-              <Button onClick={handleShare} size="icon">
-                <Share2 className="h-4 w-4" />
-                <span className="sr-only">Share your chatbot</span>
-              </Button>
             </div>
           </div>
+
+         <ShareAlfred userId={userId}/>
         </CardContent>
       </Card>
     </div>
