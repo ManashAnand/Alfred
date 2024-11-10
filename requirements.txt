@@ -94,3 +94,4 @@ webencodings==0.5.1
 websockets==13.1
 yarg==0.1.9
 yarl==1.17.0
+slowapi==0.1.9
