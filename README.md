@@ -1,87 +1,148 @@
-<p align="center">
-  <a href="https://nextjs-fastapi-starter.vercel.app/">
-    <img src="https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" height="96">
-    <h3 align="center">Next.js FastAPI Starter</h3>
-  </a>
-</p>
+# Alfred - Build Your Own Chatbot
 
-<p align="center">Simple Next.j 14 boilerplate that uses <a href="https://fastapi.tiangolo.com/">FastAPI</a> as the API backend.</p>
+**Alfred** is an intuitive platform designed to empower anyone, regardless of their AI expertise, to create a personalized chatbot effortlessly. This project offers a suite of features to save conversations, share chatbot projects on social media, and even integrate a resume-viewing UI.
 
-<br/>
 
-## Introduction
+## 📸 Screenshots
 
-This is a hybrid Next.js 14 + Python template. One great use case of this is to write Next.js apps that use Python AI libraries on the backend, while still having the benefits of Next.js Route Handlers and Server Side Rendering.
+![Alfred Screenshot 1](https://github.com/user-attachments/assets/b223cc28-8ec4-42af-aaac-9274586aed56)
+![Alfred Screenshot 2](https://github.com/user-attachments/assets/008ff84d-00f3-42ad-b036-0e4f1912c4b8)
 
-## How It Works
+---
 
-The Python/FastAPI server is mapped into to Next.js app under `/api/`.
+## 🎥 Working Video
 
-This is implemented using [`next.config.js` rewrites](https://github.com/digitros/nextjs-fastapi/blob/main/next.config.js) to map any request to `/api/py/:path*` to the FastAPI API, which is hosted in the `/api` folder.
+Check out the working demo of Alfred on Twitter:
 
-Also, the app/api routes are available on the same domain, so you can use NextJs Route Handlers and make requests to `/api/...`.
+[View the video here](https://x.com/manashanand2/status/1856652531675369753)
 
-On localhost, the rewrite will be made to the `127.0.0.1:8000` port, which is where the FastAPI server is running.
 
-In production, the FastAPI server is hosted as [Python serverless functions](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python) on Vercel.
+---
 
-## Demo
+## ✨ Features
 
-https://nextjs-fastapi-starter.vercel.app/
+- **No AI Expertise Needed**: Create your chatbot with zero coding or AI knowledge.
+- **Save Conversations**: Store and manage conversations for later use.
+- **Social Media Integration**: Share your chatbot projects via Twitter, WhatsApp, and more.
+- **Resume Viewer**: An integrated UI to showcase resumes provided by users.
+- **Live Demo**: Experience the platform at [Alfred Live](https://alfred-tau.vercel.app/).
 
-## Deploy Your Own
+---
 
-You can clone & deploy it to Vercel with one click:
+## 🚀 Installation
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdigitros%2Fnextjs-fastapi%2Ftree%2Fmain)
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or Yarn
 
-## Developing Locally
+### Steps to Install
 
-You can clone & create this repo with the following command
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/ManashAnand/Alfred.git
+   cd Alfred
+   ```
 
-```bash
-npx create-next-app nextjs-fastapi --example "https://github.com/digitros/nextjs-fastapi"
-```
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-## Getting Started
+3. **Run the Development Server**:
+   ```bash
+   npm run dev
+   ```
 
-First, create and activate a virtual environment:
+4. **Build the Project**:
+   ```bash
+   npm run build
+   ```
 
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
+5. **Start the Production Server**:
+   ```bash
+   npm start
+   ```
 
-Then, install the dependencies:
+---
 
-```bash
-npm install
-# or
-yarn
-# or
-pnpm install
-```
+## 🛠️ Development
 
-Then, run the development server(python dependencies will be installed automatically here):
-
+### Running in Development Mode
+To test changes locally, use the following command:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This starts a local development server and watches for file changes.
 
-The FastApi server will be running on [http://127.0.0.1:8000](http://127.0.0.1:8000) – feel free to change the port in `package.json` (you'll also need to update it in `next.config.js`).
+---
 
-## Learn More
+## 📁 Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```plaintext
+Alfred/
+├── api/                    # added feed button (3 weeks ago)
+├── app/                    # resolve tags issue and made a new API for getting the latest user (3 weeks ago)
+├── components/             # added share button for Alfred (3 weeks ago)
+├── hooks/                  # added tags using dynamic (last month)
+├── lib/                    # added tags using dynamic (last month)
+├── public/                 # added tags using dynamic (last month)
+├── utils/
+│   └── supabase/           # added tags using dynamic (last month)
+├── .dockerignore           # added docker file (3 weeks ago)
+├── .eslintrc.json          # added tags using dynamic (last month)
+├── .gitignore              # added tags using dynamic (last month)
+├── Dockerfile              # added feed button (3 weeks ago)
+├── LICENSE                 # added tags using dynamic (last month)
+├── README.md               # added tags using dynamic (last month)
+├── components.json         # added tags using dynamic (last month)
+├── middleware.ts           # added tags using dynamic (last month)
+├── next.config.js          # added tags using dynamic (last month)
+├── package-lock.json       # added share button for Alfred (3 weeks ago)
+├── package.json            # added share button for Alfred (3 weeks ago)
+├── postcss.config.js       # added tags using dynamic (last month)
+├── requirements.txt        # added rate limiter with 5 min per request (3 weeks ago)
+├── tailwind.config.js      # added tags using dynamic (last month)
+└── tsconfig.json           # added tags using dynamic (last month)
+└── vercel.json             # added vercel.json to remove extra dependency
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [FastAPI Documentation](https://fastapi.tiangolo.com/) - learn about FastAPI features and API.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 🤝 Contributing
+
+Contributions are welcome! Here's how you can contribute:
+
+1. Fork the repository.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/your-feature
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m "Add your feature"
+   ```
+4. Push to the branch:
+   ```bash
+   git push origin feature/your-feature
+   ```
+5. Create a Pull Request.
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 📞 Support
+
+If you encounter any issues or have questions, feel free to open an [issue](https://github.com/ManashAnand/Alfred/issues) or reach out.
+
+---
+
+## 🌟 Acknowledgments
+
+- Built with [Next.js](https://nextjs.org/)
+- Hosted on [Vercel](https://vercel.com/)
